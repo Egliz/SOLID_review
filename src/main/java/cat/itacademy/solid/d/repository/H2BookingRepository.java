@@ -2,6 +2,7 @@ package cat.itacademy.solid.d.repository;
 
 import cat.itacademy.solid.d.model.Booking;
 import cat.itacademy.solid.d.model.BookingStatus;
+import cat.itacademy.solid.d.service.BookingRepository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class H2BookingRepository implements AutoCloseable {
+public class H2BookingRepository implements AutoCloseable, BookingRepository {
 
     // Una única conexió oberta: una base H2 en memòria desapareix quan es tanca l'última connexió.
     private final Connection connection;
@@ -38,6 +39,7 @@ public class H2BookingRepository implements AutoCloseable {
         }
     }
 
+    @Override
     public Booking save(Booking booking) {
         return booking.getId() == null ? insert(booking) : update(booking);
     }
@@ -121,6 +123,7 @@ public class H2BookingRepository implements AutoCloseable {
         }
     }
 
+    @Override
     public Optional<Booking> findById(Long bookingId) {
         String sql = "SELECT * FROM bookings WHERE id = ?";
 

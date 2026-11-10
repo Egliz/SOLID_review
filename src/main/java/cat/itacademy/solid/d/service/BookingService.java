@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class BookingService {
 
-    private final H2BookingRepository repository;
+    private final BookingRepository repository;
 
     public BookingService(H2BookingRepository repository) {
         this.repository = repository;
