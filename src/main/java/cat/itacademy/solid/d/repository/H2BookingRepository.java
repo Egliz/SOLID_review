@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class H2BookingRepository implements AutoCloseable, BookingRepository {
+public class H2BookingRepository implements AutoCloseable, BookingRepository{
 
     // Una única conexió oberta: una base H2 en memòria desapareix quan es tanca l'última connexió.
     private final Connection connection;
@@ -174,4 +174,8 @@ public class H2BookingRepository implements AutoCloseable, BookingRepository {
             throw new IllegalStateException("Could not create schema", e);
         }
     }
+
+    @Override
+    public String persistence() {
+        return "H2 (base de dades en memòria)";    }
 }

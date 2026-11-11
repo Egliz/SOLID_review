@@ -2,7 +2,6 @@ package cat.itacademy.solid.d.service;
 
 import cat.itacademy.solid.d.exception.BookingAccessDeniedException;
 import cat.itacademy.solid.d.model.Booking;
-import cat.itacademy.solid.d.repository.H2BookingRepository;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +9,7 @@ public class BookingService {
 
     private final BookingRepository repository;
 
-    public BookingService(H2BookingRepository repository) {
+    public BookingService(BookingRepository repository) {
         this.repository = repository;
     }
 

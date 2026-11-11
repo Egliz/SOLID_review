@@ -1,6 +1,7 @@
 package cat.itacademy.solid.d.repository;
 
 import cat.itacademy.solid.d.model.Booking;
+import cat.itacademy.solid.d.service.BookingRepository;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -8,11 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class InMemoryBookingRepository {
+public class InMemoryBookingRepository implements BookingRepository {
 
     private final Map<Long, Booking> bookings = new HashMap<>();
     private long nextId = 1;
 
+    @Override
     public Booking save(Booking booking) {
         Long id = booking.getId();
         if (id == null) {
@@ -26,6 +28,7 @@ public class InMemoryBookingRepository {
         return copy(saved, id);
     }
 
+    @Override
     public Optional<Booking> findById(Long bookingId) {
         return Optional.ofNullable(bookings.get(bookingId))
                 .map(booking -> copy(booking, booking.getId()));
@@ -51,4 +54,9 @@ public class InMemoryBookingRepository {
                 booking.getCancelledAt()
         );
     }
+
+    @Override
+    public String persistence() {
+        return "En memòria (Map)";    }
 }
+
