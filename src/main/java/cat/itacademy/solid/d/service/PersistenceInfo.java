@@ -1,4 +1,4 @@
-package cat.itacademy.solid.d.repository;
+package cat.itacademy.solid.d.service;
 
 public interface PersistenceInfo {
 

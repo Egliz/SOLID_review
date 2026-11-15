@@ -10,7 +10,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,13 +22,18 @@ class BookingServiceTest {
 
     private H2BookingRepository repository;
     private BookingService service;
+    private Clock fixedClock;
 
     @BeforeEach
     void setUp() {
+        Instant fixedInstant = LocalDateTime.of(2026, 4, 3, 14, 30).toInstant(ZoneOffset.UTC);
+        fixedClock = Clock.fixed(fixedInstant, ZoneOffset.UTC);
+
+
         repository = new H2BookingRepository(
                 "jdbc:h2:mem:" + UUID.randomUUID()
         );
-        service = new BookingService(repository);
+        service = new BookingService(repository, fixedClock);
     }
 
     @AfterEach
@@ -56,7 +64,7 @@ class BookingServiceTest {
 
     @Test
     void ownerShouldNotCancelLessThan24HoursBeforeStart() {
-        Long id = save(LocalDateTime.now().plusHours(2));
+        Long id = save(LocalDateTime.now(fixedClock).plusHours(2));
 
         assertThrows(
                 CancellationPeriodExpiredException.class,
@@ -71,14 +79,13 @@ class BookingServiceTest {
                 () -> service.cancelBooking("CUSTOMER-001", 999L)
         );
     }
-
-    @Disabled("Fràgil: no podem controlar l'hora. Habilita'l per veure'l fallar i després fes-lo determinista.")
+    //@Disabled("Fràgil: no podem controlar l'hora. Habilita'l per veure'l fallar i després fes-lo determinista.")
     @Test
     void ownerShouldCancelExactly24HoursBeforeStart() {
         // Volem provar el límit exacte, però el servei llegeix el seu propi LocalDateTime.now().
         // Quan s'executa, ja han passat uns mil·lisegons i som a "24 h menys una mica": la reserva
         // queda fora de termini i el test falla, encara que la regla diu que el límit és vàlid.
-        Long id = save(LocalDateTime.now().plusHours(24));
+        Long id = save(LocalDateTime.now(fixedClock).plusHours(24));
 
         assertDoesNotThrow(() -> service.cancelBooking("CUSTOMER-001", id));
     }

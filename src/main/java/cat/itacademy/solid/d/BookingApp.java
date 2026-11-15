@@ -7,10 +7,14 @@ import cat.itacademy.solid.d.repository.InMemoryBookingRepository;
 import cat.itacademy.solid.d.service.BookingRepository;
 import cat.itacademy.solid.d.service.BookingService;
 
+import java.time.Clock;
+
 public class BookingApp {
 
     public static void main(String[] args) {
         ConsoleInput input = new ConsoleInput(System.in, System.out);
+        Clock clock = Clock.systemDefaultZone();
+
 
         System.out.println("Persistències disponibles:");
         System.out.println("  1. H2 (base de dades en memòria)");
@@ -19,8 +23,8 @@ public class BookingApp {
 
         if (input.readIntInRange("Tria persistència (1-2): ", 1, 2) == 2) {
             BookingRepository bookingRepository = new InMemoryBookingRepository();
-            BookingService service = new BookingService(bookingRepository);
-            new BookingConsole(bookingRepository, service, input, System.out).run();
+            BookingService service = new BookingService(bookingRepository, clock);
+            new BookingConsole(bookingRepository, service, input, System.out, clock).run();
 
             printPendingExercise();
             System.out.println();
@@ -28,9 +32,9 @@ public class BookingApp {
         } else {
 
             try (H2BookingRepository bookingRepository = new H2BookingRepository("jdbc:h2:mem:bookings")){
-                BookingService service = new BookingService(bookingRepository);
+                BookingService service = new BookingService(bookingRepository, clock);
 
-                new BookingConsole(bookingRepository, service, input, System.out).run();
+                new BookingConsole(bookingRepository, service, input, System.out, clock).run();
             }
         }
     }

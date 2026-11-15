@@ -7,6 +7,7 @@ import cat.itacademy.solid.d.service.BookingRepository;
 import cat.itacademy.solid.d.service.BookingService;
 
 import java.io.PrintStream;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -21,17 +22,20 @@ public class BookingConsole {
     private final BookingService service;
     private final ConsoleInput input;
     private final PrintStream out;
+    private final Clock clock;
 
     public BookingConsole(
             BookingRepository repository,
             BookingService service,
             ConsoleInput input,
-            PrintStream out
+            PrintStream out,
+            Clock clock
     ) {
         this.repository = repository;
         this.service = service;
         this.input = input;
         this.out = out;
+        this.clock = clock;
     }
 
     public void run() {
@@ -149,7 +153,7 @@ public class BookingConsole {
         long hoursFromNow = input.readLong("Inicia d'aquí a quantes hores? ", 0);
         long durationHours = input.readLong("Durada en hores: ", 1);
 
-        LocalDateTime startsAt = LocalDateTime.now().plusHours(hoursFromNow);
+        LocalDateTime startsAt = LocalDateTime.now(clock).plusHours(hoursFromNow);
         Booking saved = repository.save(
                 new Booking(customerId, roomId, startsAt, startsAt.plusHours(durationHours))
         );

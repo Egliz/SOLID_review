@@ -10,6 +10,10 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -155,11 +159,14 @@ class BookingConsoleTest {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(bytes);
 
+        Instant fixedInstant = LocalDateTime.of(2025, 1, 1, 10, 0)
+                .toInstant(ZoneOffset.UTC);
+        Clock fixedClock = Clock.fixed(fixedInstant, ZoneOffset.UTC);
+
         new BookingConsole(
                 repository,
-                new BookingService(repository),
-                new ConsoleInput(new ByteArrayInputStream(input.getBytes()), out),
-                out
+                new BookingService(repository, fixedClock),
+                new ConsoleInput(new ByteArrayInputStream(input.getBytes()), out), out, fixedClock
         ).run();
 
         return bytes.toString();

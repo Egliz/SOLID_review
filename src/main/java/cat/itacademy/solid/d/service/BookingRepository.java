@@ -1,7 +1,6 @@
 package cat.itacademy.solid.d.service;
 
 import cat.itacademy.solid.d.model.Booking;
-import cat.itacademy.solid.d.repository.PersistenceInfo;
 
 import java.util.List;
 import java.util.Optional;
